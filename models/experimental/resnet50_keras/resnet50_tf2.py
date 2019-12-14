@@ -60,7 +60,7 @@ IMAGENET_VALIDATION_IMAGES = 10000  # Number of eval images.
 PER_CORE_BATCH_SIZE = 128
 
 # Training hyperparameters.
-USE_BFLOAT16 = False
+USE_BFLOAT16 = True  # todo
 BASE_LEARNING_RATE = 0.4
 # Learning rate schedule
 LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
