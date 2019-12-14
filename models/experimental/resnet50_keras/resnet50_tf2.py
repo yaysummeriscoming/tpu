@@ -165,6 +165,7 @@ def sparse_top_k_categorical_accuracy(y_true, y_pred, k=5):
 def main(unused_argv):
   assert FLAGS.data is not None, 'Provide training data path via --data.'
   tf.enable_v2_behavior()
+  tf.disable_eager_execution()  # todo
 
   batch_size = FLAGS.num_cores * PER_CORE_BATCH_SIZE
 
