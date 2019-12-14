@@ -36,6 +36,7 @@ import tensorflow.compat.v2 as tf
 import imagenet_input
 import model_saving_utils
 import resnet_model
+import keras_applications
 
 # Common flags for TPU models.
 flags.DEFINE_string('tpu', None, 'Name of the TPU to use.')
@@ -190,7 +191,8 @@ def main(unused_argv):
 
   with strategy.scope():
     logging.info('Building Keras ResNet-50 model')
-    model = resnet_model.ResNet50(num_classes=NUM_CLASSES)
+    # model = resnet_model.ResNet50(num_classes=NUM_CLASSES)
+    model = keras_applications.mobilenet_v2.MobileNetV2(classes=NUM_CLASSES)
 
     logging.info('Compiling model.')
     metrics = ['sparse_categorical_accuracy']
