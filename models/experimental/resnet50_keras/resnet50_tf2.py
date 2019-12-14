@@ -192,7 +192,7 @@ def main(unused_argv):
   with strategy.scope():
     logging.info('Building Keras ResNet-50 model')
     # model = resnet_model.ResNet50(num_classes=NUM_CLASSES)
-    model = keras_applications.mobilenet_v2.MobileNetV2(classes=NUM_CLASSES)
+    model = keras_applications.mobilenet_v2.MobileNetV2(classes=NUM_CLASSES, weights=None)
 
     logging.info('Compiling model.')
     metrics = ['sparse_categorical_accuracy']
