@@ -57,7 +57,7 @@ IMAGE_SIZE = 224
 EPOCHS = 90  # Standard imagenet training regime.
 APPROX_IMAGENET_TRAINING_IMAGES = 100000  # Number of images in ImageNet-1k train dataset.
 IMAGENET_VALIDATION_IMAGES = 10000  # Number of eval images.
-PER_CORE_BATCH_SIZE = 128
+PER_CORE_BATCH_SIZE = 8  # todo
 
 # Training hyperparameters.
 USE_BFLOAT16 = False
@@ -176,32 +176,32 @@ def main(unused_argv):
   model_dir = FLAGS.model_dir if FLAGS.model_dir else DEFAULT_MODEL_DIR
   logging.info('Saving tensorboard summaries at %s', model_dir)
 
-  logging.info('Use TPU at %s', FLAGS.tpu if FLAGS.tpu is not None else 'local')
-  resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=FLAGS.tpu)
-  tf.config.experimental_connect_to_cluster(resolver)
-  tf.tpu.experimental.initialize_tpu_system(resolver)
-  strategy = tf.distribute.experimental.TPUStrategy(resolver)
+  # logging.info('Use TPU at %s', FLAGS.tpu if FLAGS.tpu is not None else 'local')
+  # resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=FLAGS.tpu)
+  # tf.config.experimental_connect_to_cluster(resolver)
+  # tf.tpu.experimental.initialize_tpu_system(resolver)
+  # strategy = tf.distribute.experimental.TPUStrategy(resolver)
 
   logging.info('Use bfloat16: %s.', USE_BFLOAT16)
   logging.info('Use global batch size: %s.', batch_size)
   logging.info('Enable top 5 accuracy: %s.', FLAGS.eval_top_5_accuracy)
   logging.info('Training model using data in directory "%s".', FLAGS.data)
 
-  with strategy.scope():
-    logging.info('Building Keras ResNet-50 model')
-    model = resnet_model.ResNet50(num_classes=NUM_CLASSES)
+  # with strategy.scope():
+  logging.info('Building Keras ResNet-50 model')
+  model = resnet_model.ResNet50(num_classes=NUM_CLASSES)
 
-    logging.info('Compiling model.')
-    metrics = ['sparse_categorical_accuracy']
+  logging.info('Compiling model.')
+  metrics = ['sparse_categorical_accuracy']
 
-    if FLAGS.eval_top_5_accuracy:
-      metrics.append(sparse_top_k_categorical_accuracy)
+  if FLAGS.eval_top_5_accuracy:
+    metrics.append(sparse_top_k_categorical_accuracy)
 
-    model.compile(
-        optimizer=tf.keras.optimizers.SGD(
-            learning_rate=BASE_LEARNING_RATE, momentum=0.9, nesterov=True),
-        loss='sparse_categorical_crossentropy',
-        metrics=metrics)
+  model.compile(
+      optimizer=tf.keras.optimizers.SGD(
+          learning_rate=BASE_LEARNING_RATE, momentum=0.9, nesterov=True),
+      loss='sparse_categorical_crossentropy',
+      metrics=metrics)
 
   imagenet_train = imagenet_input.ImageNetInput(
       is_training=True, data_dir=FLAGS.data, batch_size=batch_size,
